@@ -24,8 +24,9 @@
 (defmethod mixed:start ((drain drain)))
 
 (defmethod mixed:mix ((drain drain))
-  (mixed:with-buffer-tx (data start size (mixed:pack drain))
-    (sleep (/ size (mixed:samplerate (mixed:pack drain))))
-    (mixed:finish size)))
+  (locally #+cmucl (declare (notinline mixed:data-ptr))
+    (mixed:with-buffer-tx (%data %start size (mixed:pack drain))
+      (sleep (/ size (mixed:samplerate (mixed:pack drain))))
+      (mixed:finish size))))
 
 (defmethod mixed:end ((drain drain)))
