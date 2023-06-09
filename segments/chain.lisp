@@ -11,7 +11,7 @@
 
 (defmethod initialize-instance :after ((segment chain) &key segments bypass)
   (with-error-on-failure ()
-    (mixed:make-segment-chain (handle segment)))
+    (mixed-cffi:make-segment-chain (handle segment)))
   (map NIL (lambda (s) (add s segment)) segments)
   (setf (bypass segment) bypass))
 
@@ -22,14 +22,14 @@
 
 (defmethod add ((segment segment) (chain chain))
   (with-error-on-failure ()
-    (mixed:chain-add (handle segment) (handle chain)))
+    (mixed-cffi:chain-add (handle segment) (handle chain)))
   (vector-push-extend segment (segments chain))
   segment)
 
 (defmethod withdraw ((i integer) (chain chain))
   (when (handle chain)
     (with-error-on-failure ()
-      (mixed:chain-remove-at i (handle chain))))
+      (mixed-cffi:chain-remove-at i (handle chain))))
   (let ((segment (aref (segments chain) i)))
     (vector-remove-pos i (segments chain))
     segment))
@@ -37,7 +37,7 @@
 (defmethod withdraw ((segment segment) (chain chain))
   (when (handle chain)
     (with-error-on-failure ()
-      (mixed:chain-remove (handle segment) (handle chain))))
+      (mixed-cffi:chain-remove (handle segment) (handle chain))))
   (vector-remove segment (segments chain))
   segment)
 
@@ -45,7 +45,7 @@
   (loop for i downfrom (1- (length (segments chain))) to 0
         do (when (handle chain)
              (with-error-on-failure ()
-               (mixed:chain-remove-at i (handle chain))))
+               (mixed-cffi:chain-remove-at i (handle chain))))
            (setf (aref (segments chain) i) NIL))
   (setf (fill-pointer (segments chain)) 0))
 

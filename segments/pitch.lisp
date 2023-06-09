@@ -14,7 +14,7 @@
 
 (defmethod initialize-instance :after ((segment pitch) &key pitch samplerate bypass wet)
   (with-error-on-failure ()
-    (mixed:make-segment-pitch (float pitch 0f0) samplerate (handle segment)))
+    (mixed-cffi:make-segment-pitch (float pitch 0f0) samplerate (handle segment)))
   (when wet (setf (wet segment) wet))
   (setf (bypass segment) bypass))
 

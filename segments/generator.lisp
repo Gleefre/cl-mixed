@@ -15,7 +15,7 @@
 
 (defmethod initialize-instance :after ((segment generator) &key type frequency samplerate)
   (with-error-on-failure ()
-    (mixed:make-segment-generator type 440 samplerate (handle segment)))
+    (mixed-cffi:make-segment-generator type 440 samplerate (handle segment)))
   (when frequency (setf (frequency segment) frequency)))
 
 (defun make-generator (&rest args &key type frequency samplerate)
@@ -23,5 +23,5 @@
   (apply #'make-instance 'generator args))
 
 (define-field-accessor volume generator :float :volume)
-(define-field-accessor wave-type generator mixed:generator-type :generator-type)
+(define-field-accessor wave-type generator mixed-cffi:generator-type :generator-type)
 (define-field-accessor frequency generator :float :generator-frequency)

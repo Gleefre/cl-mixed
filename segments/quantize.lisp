@@ -13,7 +13,7 @@
 
 (defmethod initialize-instance :after ((segment quantize) &key steps bypass wet)
   (with-error-on-failure ()
-    (mixed:make-segment-quantize steps (handle segment)))
+    (mixed-cffi:make-segment-quantize steps (handle segment)))
   (when wet (setf (wet segment) wet))
   (setf (bypass segment) bypass))
 

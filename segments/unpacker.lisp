@@ -11,7 +11,7 @@
 
 (defmethod initialize-instance :after ((unpacker unpacker) &key (samplerate *default-samplerate*))
   (with-error-on-failure ()
-    (mixed:make-segment-unpacker (handle (pack unpacker)) samplerate (handle unpacker))))
+    (mixed-cffi:make-segment-unpacker (handle (pack unpacker)) samplerate (handle unpacker))))
 
 (defun make-unpacker (&key pack (encoding :float) (channels 2) (samplerate *default-samplerate*) (frames (floor samplerate 100)) (source-samplerate samplerate))
   (make-instance 'unpacker :pack (or pack (make-pack :frames frames :encoding encoding :channels channels :samplerate source-samplerate))

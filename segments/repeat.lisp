@@ -13,7 +13,7 @@
 
 (defmethod initialize-instance :after ((segment repeat) &key time mode samplerate bypass)
   (with-error-on-failure ()
-    (mixed:make-segment-repeat (float time 0f0) samplerate (handle segment)))
+    (mixed-cffi:make-segment-repeat (float time 0f0) samplerate (handle segment)))
   (when mode (setf (repeat-mode segment) mode))
   (setf (bypass segment) bypass))
 
@@ -23,6 +23,6 @@
 
 (define-field-accessor repeat-position repeat :float :repeat-position)
 (define-field-accessor duration repeat :float :repeat-time)
-(define-field-accessor repeat-mode repeat mixed:repeat-mode :repeat-mode)
+(define-field-accessor repeat-mode repeat mixed-cffi:repeat-mode :repeat-mode)
 (define-field-accessor samplerate repeat :float :samplerate)
 (define-field-accessor bypass repeat :bool :bypass)

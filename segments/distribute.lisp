@@ -11,7 +11,7 @@
 
 (defmethod initialize-instance :after ((segment distributor) &key)
   (with-error-on-failure ()
-    (mixed:make-segment-distribute (handle segment))))
+    (mixed-cffi:make-segment-distribute (handle segment))))
 
 (defun make-distributor (&rest args &key)
   (apply #'make-instance 'distributor args))

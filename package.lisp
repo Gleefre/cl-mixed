@@ -162,7 +162,7 @@
   (:import-from #:org.shirakumo.fraf.mixed.cffi #:size_t)
   (:shadow #:space #:byte-position)
   (:local-nicknames
-   (#:mixed #:org.shirakumo.fraf.mixed.cffi))
+   (#:mixed-cffi #:org.shirakumo.fraf.mixed.cffi))
   ;; bip-buffer.lisp
   (:export
    #:available-read

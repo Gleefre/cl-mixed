@@ -11,7 +11,7 @@
 
 (defmethod initialize-instance :after ((segment void) &key)
   (with-error-on-failure ()
-    (mixed:make-segment-void (handle segment))))
+    (mixed-cffi:make-segment-void (handle segment))))
 
 (defun make-void (&rest args &key)
   (apply #'make-instance 'void args))
@@ -21,7 +21,7 @@
 
 (defmethod initialize-instance :after ((segment zero) &key)
   (with-error-on-failure ()
-    (mixed:make-segment-zero (handle segment))))
+    (mixed-cffi:make-segment-zero (handle segment))))
 
 (defun make-zero (&rest args &key)
   (apply #'make-instance 'zero args))

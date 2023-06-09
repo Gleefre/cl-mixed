@@ -13,7 +13,7 @@ Author: Nicolas Hafner <shinmera@tymoon.eu>
 
 (defmethod initialize-instance :after ((space spatial-reverb) &key samplerate)
   (with-error-on-failure ()
-    (mixed:make-segment-spatial-reverb samplerate (handle space))))
+    (mixed-cffi:make-segment-spatial-reverb samplerate (handle space))))
 
 (defun make-spatial-reverb (&key (samplerate *default-samplerate*) distance-delay max-distance)
   (let ((instance (make-instance 'spatial-reverb :samplerate samplerate)))
@@ -34,7 +34,7 @@ Author: Nicolas Hafner <shinmera@tymoon.eu>
         (copy hit-ratios)
         (copy absorption-rates)))
     (with-error-on-failure ()
-      (mixed:segment-set :spatial-reverb-parameters value (handle segment)))))
+      (mixed-cffi:segment-set :spatial-reverb-parameters value (handle segment)))))
 
 (defmethod add-spatial-probe ((segment spatial-reverb) angle length absorption-rate)
   (with-foreign-object (value :float 3)
@@ -42,4 +42,4 @@ Author: Nicolas Hafner <shinmera@tymoon.eu>
     (setf (cffi:mem-aref value :float 1) length)
     (setf (cffi:mem-aref value :float 2) absorption-rate)
     (with-error-on-failure ()
-      (mixed:segment-set :spatial-reverb-probe value (handle segment)))))
+      (mixed-cffi:segment-set :spatial-reverb-probe value (handle segment)))))

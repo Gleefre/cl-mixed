@@ -11,27 +11,27 @@
 
 (defmethod initialize-instance :after ((buffer buffer) &key size virtual)
   (if virtual
-      (setf (mixed:buffer-virtual-p (handle buffer)) 1)
+      (setf (mixed-cffi:buffer-virtual-p (handle buffer)) 1)
       (let ((data (static-vectors:make-static-vector size :element-type 'single-float :initial-element 0f0))
             (handle (handle buffer)))
         (setf (slot-value buffer 'data) data)
-        (setf (mixed:buffer-size handle) size)
-        (setf (mixed:buffer-data handle) (static-vectors:static-vector-pointer data)))))
+        (setf (mixed-cffi:buffer-size handle) size)
+        (setf (mixed-cffi:buffer-data handle) (static-vectors:static-vector-pointer data)))))
 
 (defun make-buffer (size)
   (make-instance 'buffer :size size))
 
 (defmethod allocate-handle ((buffer buffer))
-  (calloc '(:struct mixed:buffer)))
+  (calloc '(:struct mixed-cffi:buffer)))
 
 (defmethod free ((buffer buffer))
-  (unless (mixed:buffer-virtual-p (handle buffer))
+  (unless (mixed-cffi:buffer-virtual-p (handle buffer))
     (when (slot-boundp buffer 'data)
       (static-vectors:free-static-vector (data buffer))
       (slot-makunbound buffer 'data))))
 
 (defmethod clear ((buffer buffer))
-  (mixed:clear-buffer (handle buffer)))
+  (mixed-cffi:clear-buffer (handle buffer)))
 
 (defmethod size ((buffer buffer))
   (length (data buffer)))
@@ -44,8 +44,8 @@
        (static-vectors:static-vector-pointer new) (static-vectors:static-vector-pointer old)
        (* (cffi:foreign-type-size :float) (length old)))
       (setf (slot-value buffer 'data) new)
-      (setf (mixed:buffer-data (handle buffer)) (static-vectors:static-vector-pointer new))
-      (setf (mixed:buffer-size (handle buffer)) (length new))
+      (setf (mixed-cffi:buffer-data (handle buffer)) (static-vectors:static-vector-pointer new))
+      (setf (mixed-cffi:buffer-size (handle buffer)) (length new))
       (static-vectors:free-static-vector old)))
   size)
 
@@ -64,7 +64,7 @@
 
 (defmethod transfer ((from buffer) (to buffer))
   (with-error-on-failure ()
-    (mixed:transfer-buffer (handle from) (handle to))))
+    (mixed-cffi:transfer-buffer (handle from) (handle to))))
 
 (defmethod framesize ((buffer buffer))
   (samplesize :float))

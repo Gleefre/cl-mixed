@@ -18,7 +18,7 @@
 
 (defmethod (setf input-field) ((value buffer) (field (eql :buffer)) (location integer) (mixer mixer))
   (with-error-on-failure ()
-    (mixed:segment-set-in field location (handle value) (handle mixer)))
+    (mixed-cffi:segment-set-in field location (handle value) (handle mixer)))
   (cond ((< location (length (inputs mixer)))
          ;; FIXME: if explicitly set, location is not removed from FREE-LOCATIONS.
          (setf (aref (inputs mixer) location) value))
@@ -30,7 +30,7 @@
 
 (defmethod (setf input-field) ((value null) (field (eql :buffer)) (location integer) (mixer mixer))
   (with-error-on-failure ()
-    (mixed:segment-set-in field location (cffi:null-pointer) (handle mixer)))
+    (mixed-cffi:segment-set-in field location (cffi:null-pointer) (handle mixer)))
   (cond ((< location (length (inputs mixer)))
          (setf (aref (inputs mixer) location) value)
          ;; FIXME: inefficient as hell.

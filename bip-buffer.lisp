@@ -11,8 +11,8 @@ Author: Nicolas Hafner <shinmera@tymoon.eu>
 
 (defmacro with-buffer-fields ((read write full-r2) buffer &body body)
   `(let* ((,buffer (handle ,buffer))
-          (,read (mixed:buffer-read ,buffer))
-          (,write (mixed:buffer-write ,buffer))
+          (,read (mixed-cffi:buffer-read ,buffer))
+          (,write (mixed-cffi:buffer-write ,buffer))
           (,full-r2 (logbitp 31 ,write))
           (,write (ldb (byte 31 0) ,write)))
      (declare (type cffi:foreign-pointer ,buffer))
@@ -23,8 +23,8 @@ Author: Nicolas Hafner <shinmera@tymoon.eu>
   (declare (optimize speed))
   (with-buffer-fields (read write full-r2) buffer
     (if full-r2
-        (if (< read (mixed:buffer-size buffer))
-            (- (mixed:buffer-size buffer) read)
+        (if (< read (mixed-cffi:buffer-size buffer))
+            (- (mixed-cffi:buffer-size buffer) read)
             write)
         (- write read))))
 
@@ -34,10 +34,10 @@ Author: Nicolas Hafner <shinmera@tymoon.eu>
   (with-buffer-fields (read write full-r2) buffer
     (cond (full-r2
            (- read write))
-          ((= write (mixed:buffer-size buffer))
+          ((= write (mixed-cffi:buffer-size buffer))
            read)
           (T
-           (- (mixed:buffer-size buffer) write)))))
+           (- (mixed-cffi:buffer-size buffer) write)))))
 
 (declaim (ftype (function (bip-buffer (unsigned-byte 32)) (values (unsigned-byte 32) (unsigned-byte 32))) request-write))
 (defun request-write (buffer size)
@@ -45,19 +45,19 @@ Author: Nicolas Hafner <shinmera@tymoon.eu>
   (declare (type (unsigned-byte 32) size))
   (with-buffer-fields (read write full-r2) buffer
     (cond ((not full-r2)
-           (let ((available (- (mixed:buffer-size buffer) write)))
+           (let ((available (- (mixed-cffi:buffer-size buffer) write)))
              (cond ((< 0 available)
-                    (setf (mixed:buffer-reserved buffer) (min size available))
-                    (values write (mixed:buffer-reserved buffer)))
+                    (setf (mixed-cffi:buffer-reserved buffer) (min size available))
+                    (values write (mixed-cffi:buffer-reserved buffer)))
                    ((< 0 read)
-                    (setf (mixed:buffer-reserved buffer) (min size read))
-                    (setf (mixed:buffer-write buffer) #x80000000)
-                    (values 0 (mixed:buffer-reserved buffer)))
+                    (setf (mixed-cffi:buffer-reserved buffer) (min size read))
+                    (setf (mixed-cffi:buffer-write buffer) #x80000000)
+                    (values 0 (mixed-cffi:buffer-reserved buffer)))
                    (T
                     (values 0 0)))))
           ((< write read)
-           (setf (mixed:buffer-reserved buffer) (min size (- read write)))
-           (values write (mixed:buffer-reserved buffer)))
+           (setf (mixed-cffi:buffer-reserved buffer) (min size (- read write)))
+           (values write (mixed-cffi:buffer-reserved buffer)))
           (T
            (values 0 0)))))
 
@@ -65,9 +65,9 @@ Author: Nicolas Hafner <shinmera@tymoon.eu>
   (declare (optimize speed))
   (declare (type (unsigned-byte 32) size))
   (let ((buffer (handle buffer)))
-    (when (< (mixed:buffer-reserved buffer) size)
+    (when (< (mixed-cffi:buffer-reserved buffer) size)
       (error "Overcommit."))
-    (mixed:buffer-finish-write size buffer)))
+    (mixed-cffi:buffer-finish-write size buffer)))
 
 (declaim (ftype (function (bip-buffer (unsigned-byte 32)) (values (unsigned-byte 32) (unsigned-byte 32))) request-read))
 (defun request-read (buffer size)
@@ -85,10 +85,10 @@ Author: Nicolas Hafner <shinmera@tymoon.eu>
     (cffi:with-foreign-objects ((area :pointer)
                                 (rsize :uint32))
       (setf (cffi:mem-ref rsize :uint32) size)
-      (if (< 0 (mixed:buffer-request-read area rsize handle))
+      (if (< 0 (mixed-cffi:buffer-request-read area rsize handle))
           (let ((off (the (unsigned-byte 32)
                           (- (cffi:pointer-address (cffi:mem-ref area :pointer))
-                             (cffi:pointer-address (mixed:buffer-data handle))))))
+                             (cffi:pointer-address (mixed-cffi:buffer-data handle))))))
             ;; Need to make sure to get the element count out of float buffers rather
             ;; than the byte offset we get with the pointer difference.
             (print off)
@@ -97,13 +97,13 @@ Author: Nicolas Hafner <shinmera@tymoon.eu>
           (values 0 0))))
   (with-buffer-fields (read write full-r2) buffer
     (cond (full-r2
-           (let ((available (- (mixed:buffer-size buffer) read)))
+           (let ((available (- (mixed-cffi:buffer-size buffer) read)))
              (cond ((< 0 available)
                     (values read (min size available)))
                    ((< 0 write)
                     ;; FIXME: This should be CASed.
-                    (setf (mixed:buffer-write buffer) write)
-                    (setf (mixed:buffer-read buffer) 0)
+                    (setf (mixed-cffi:buffer-write buffer) write)
+                    (setf (mixed-cffi:buffer-read buffer) 0)
                     (values 0 (min size write)))
                    (T
                     (values 0 0)))))
@@ -117,13 +117,13 @@ Author: Nicolas Hafner <shinmera@tymoon.eu>
   (declare (type (unsigned-byte 32) size))
   (with-buffer-fields (read write full-r2) buffer
     (cond (full-r2
-           (if (< (- (mixed:buffer-size buffer) read) size)
+           (if (< (- (mixed-cffi:buffer-size buffer) read) size)
                (error "Overcommit.")
-               (setf (mixed:buffer-read buffer) (+ read size))))
+               (setf (mixed-cffi:buffer-read buffer) (+ read size))))
           ((< read write)
            (if (< (- write read) size)
                (error "Overcommit.")
-               (setf (mixed:buffer-read buffer) (+ read size))))
+               (setf (mixed-cffi:buffer-read buffer) (+ read size))))
           ((< 0 size)
            (error "Overcommit")))))
 
@@ -154,7 +154,7 @@ Author: Nicolas Hafner <shinmera@tymoon.eu>
                 (declare (ignorable #'finish #'data-ptr))
                 (unwind-protect
                      (progn ,@body)
-                  (setf (mixed:buffer-reserved (handle ,buffer)) 0)))))))))
+                  (setf (mixed-cffi:buffer-reserved (handle ,buffer)) 0)))))))))
 
 (defmacro with-buffer-transfer ((fdata fstart from) (tdata tstart to) size &body body)
   (let ((fromg (gensym "FROM"))

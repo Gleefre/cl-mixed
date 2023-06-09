@@ -13,7 +13,7 @@
 
 (defmethod initialize-instance :after ((segment speed-change) &key speed-factor bypass)
   (with-error-on-failure ()
-    (mixed:make-segment-speed-change (float speed-factor 0d0) (handle segment)))
+    (mixed-cffi:make-segment-speed-change (float speed-factor 0d0) (handle segment)))
   (setf (bypass segment) bypass))
 
 (defun make-speed-change (&rest args &key speed-factor)

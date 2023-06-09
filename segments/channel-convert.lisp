@@ -15,14 +15,14 @@
 
 (defmethod initialize-instance :after ((segment channel-convert) &key in out samplerate)
   (with-error-on-failure ()
-    (mixed:make-segment-channel-convert in out samplerate (handle segment))))
+    (mixed-cffi:make-segment-channel-convert in out samplerate (handle segment))))
 
 (defun make-channel-convert (&rest args &key in out samplerate)
   (declare (ignore in out samplerate))
   (apply #'make-instance 'channel-convert args))
 
-(define-field-accessor channel-count-in channel-convert mixed:channel_t)
-(define-field-accessor channel-count-out channel-convert mixed:channel_t)
+(define-field-accessor channel-count-in channel-convert mixed-cffi:channel_t)
+(define-field-accessor channel-count-out channel-convert mixed-cffi:channel_t)
 
 (defmethod (setf field) :after (value (field (eql :channel-count-in)) (segment channel-convert))
   (setf (slot-value segment 'inputs) (adjust-array (inputs segment) value :initial-element NIL))

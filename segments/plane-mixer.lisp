@@ -13,7 +13,7 @@
 
 (defmethod initialize-instance :after ((plane plane-mixer) &key samplerate)
   (with-error-on-failure ()
-    (mixed:make-segment-plane-mixer samplerate (handle plane))))
+    (mixed-cffi:make-segment-plane-mixer samplerate (handle plane))))
 
 (defun make-plane-mixer (&rest args &key (samplerate *default-samplerate*) soundspeed doppler-factor min-distance max-distance rolloff attenuation)
   (declare (ignore soundspeed doppler-factor min-distance max-distance rolloff attenuation))
@@ -44,10 +44,10 @@
 (defmethod field ((field (eql :attenuation)) (segment plane-mixer))
   (cffi:with-foreign-object (value-ptr :pointer)
     (with-error-on-failure ()
-      (mixed:segment-get :plane-attenuation value-ptr (handle segment)))
+      (mixed-cffi:segment-get :plane-attenuation value-ptr (handle segment)))
     (loop with int = (cffi:mem-ref value-ptr :int)
-          for keyword in (cffi:foreign-enum-keyword-list 'mixed:attenuation)
-          do (when (= int (cffi:foreign-enum-value 'mixed:attenuation keyword))
+          for keyword in (cffi:foreign-enum-keyword-list 'mixed-cffi:attenuation)
+          do (when (= int (cffi:foreign-enum-value 'mixed-cffi:attenuation keyword))
                (return keyword))
           finally (return (cffi:mem-ref value-ptr :pointer)))))
 
@@ -55,12 +55,12 @@
   (cffi:with-foreign-object (value-ptr :pointer)
     (etypecase value
       (keyword
-       (setf (cffi:mem-ref value-ptr 'mixed:size_t)
-             (cffi:foreign-enum-value 'mixed:attenuation value)))
+       (setf (cffi:mem-ref value-ptr 'mixed-cffi:size_t)
+             (cffi:foreign-enum-value 'mixed-cffi:attenuation value)))
       (cffi:foreign-pointer
        (setf (cffi:mem-ref value-ptr :pointer) value)))
     (with-error-on-failure ()
-      (mixed:segment-set :plane-attenuation value-ptr (handle segment))))
+      (mixed-cffi:segment-set :plane-attenuation value-ptr (handle segment))))
   value)
 
 (defmethod attenuation ((plane plane-mixer))
