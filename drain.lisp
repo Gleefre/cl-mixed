@@ -6,6 +6,8 @@
 
 (in-package #:org.shirakumo.fraf.mixed)
 
+#+cmucl (defclass virtual () ())
+
 (defclass drain (virtual)
   ((program-name :initform "Mixed" :initarg :program-name :accessor program-name)
    (pack :initform NIL :reader pack)))
