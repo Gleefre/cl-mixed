@@ -6,6 +6,7 @@ Author: Nicolas Hafner <shinmera@tymoon.eu>
 
 (defpackage #:org.shirakumo.fraf.mixed.xaudio2
   (:use #:cl)
+  #+package-local-nicknames
   (:local-nicknames
    (#:mixed #:org.shirakumo.fraf.mixed)
    (#:mixed-cffi #:org.shirakumo.fraf.mixed.cffi)

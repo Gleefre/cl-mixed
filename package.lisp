@@ -7,6 +7,8 @@
 (in-package #:cl-user)
 (defpackage #:org.shirakumo.fraf.mixed.cffi
   (:use #:cl #:cffi)
+  #-package-local-nicknames
+  (:nicknames #:mixed-cffi)
   (:shadow #:error)
   ;; low-level.lisp
   (:export
@@ -161,8 +163,11 @@
   (:use #:cl #:cffi)
   (:import-from #:org.shirakumo.fraf.mixed.cffi #:size_t)
   (:shadow #:space #:byte-position)
+  #+package-local-nicknames
   (:local-nicknames
    (#:mixed-cffi #:org.shirakumo.fraf.mixed.cffi))
+  #-package-local-nicknames
+  (:nicknames #:mixed)
   ;; bip-buffer.lisp
   (:export
    #:available-read

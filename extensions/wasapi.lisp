@@ -6,6 +6,7 @@
 
 (defpackage #:org.shirakumo.fraf.mixed.wasapi
   (:use #:cl)
+  #+package-local-nicknames
   (:local-nicknames
    (#:mixed #:org.shirakumo.fraf.mixed)
    (#:mixed-cffi #:org.shirakumo.fraf.mixed.cffi)

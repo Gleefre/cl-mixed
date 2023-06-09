@@ -7,6 +7,8 @@
 (in-package #:cl-user)
 (defpackage #:org.shirakumo.fraf.mixed.aaudio.cffi
   (:use #:cl)
+  #-package-local-nicknames
+  (:nicknames #:aaudio)
   (:export
    #:libaaudio
    #:direction

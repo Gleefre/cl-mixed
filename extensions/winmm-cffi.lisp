@@ -7,6 +7,8 @@
 (in-package #:cl-user)
 (defpackage #:org.shirakumo.fraf.mixed.winmm.cffi
   (:use #:cl #:cffi)
+  #-package-local-nicknames
+  (:nicknames #:winmm)
   (:export
    #:winmm
    #:WAVE-MAPPER

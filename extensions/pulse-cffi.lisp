@@ -7,6 +7,8 @@
 (in-package #:cl-user)
 (defpackage #:org.shirakumo.fraf.mixed.pulse.cffi
   (:use #:cl)
+  #-package-local-nicknames
+  (:nicknames #:pulse)
   (:import-from #:org.shirakumo.fraf.mixed.cffi #:size_t)
   (:export
    #:libpulse

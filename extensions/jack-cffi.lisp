@@ -7,6 +7,8 @@
 (in-package #:cl-user)
 (defpackage #:org.shirakumo.fraf.mixed.jack.cffi
   (:use #:cl)
+  #-package-local-nicknames
+  (:nicknames #:jack)
   (:export
    #:libjack
    #:DEFAULT-AUDIO-TYPE

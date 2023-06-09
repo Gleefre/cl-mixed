@@ -7,6 +7,7 @@
 (defpackage #:org.shirakumo.fraf.mixed.wav
   (:use #:cl)
   (:shadow #:stream)
+  #+package-local-nicknames
   (:local-nicknames
    (#:mixed #:org.shirakumo.fraf.mixed)
    (#:mixed-cffi #:org.shirakumo.fraf.mixed.cffi))

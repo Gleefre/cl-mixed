@@ -7,6 +7,8 @@
 (in-package #:cl-user)
 (defpackage #:org.shirakumo.fraf.mixed.oss.cffi
   (:use #:cl #:cffi)
+  #-package-local-nicknames
+  (:nicknames #:oss)
   (:import-from #:org.shirakumo.fraf.mixed.cffi #:size_t #:ssize_t)
   (:export
    #:encoding

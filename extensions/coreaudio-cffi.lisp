@@ -6,6 +6,8 @@
 
 (defpackage #:org.shirakumo.fraf.mixed.coreaudio.cffi
   (:use #:cl)
+  #-package-local-nicknames
+  (:nicknames #:coreaudio)
   (:export
    #:audio-unit
    #:audio-toolbox

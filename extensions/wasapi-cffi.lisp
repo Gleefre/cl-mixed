@@ -7,8 +7,11 @@
 (in-package #:cl-user)
 (defpackage #:org.shirakumo.fraf.mixed.wasapi.cffi
   (:use #:cl)
+  #+package-local-nicknames
   (:local-nicknames
    (#:com #:org.shirakumo.com-on))
+  #-package-local-nicknames
+  (:nicknames #:wasapi)
   (:shadow #:byte #:sleep)
   (:export
    #:avrt

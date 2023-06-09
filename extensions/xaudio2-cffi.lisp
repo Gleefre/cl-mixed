@@ -7,9 +7,12 @@
 (in-package #:cl-user)
 (defpackage #:org.shirakumo.fraf.mixed.xaudio2.cffi
   (:use #:cl)
+  #+package-local-nicknames
   (:local-nicknames
    (#:com #:org.shirakumo.com-on)
    (#:com-cffi #:org.shirakumo.com-on.cffi))
+  #-package-local-nicknames
+  (:nicknames #:xaudio2)
   (:export
    #:xaudio2.9
    #:xaudio2.7

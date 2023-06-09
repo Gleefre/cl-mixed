@@ -7,6 +7,8 @@
 (in-package #:cl-user)
 (defpackage #:org.shirakumo.fraf.mixed.mpt.cffi
   (:use #:cl)
+  #-package-local-nicknames
+  (:nicknames #:mpt)
   (:export
    #:libopenmpt
    #:create
