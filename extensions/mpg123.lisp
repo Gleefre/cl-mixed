@@ -9,8 +9,7 @@
   #+package-local-nicknames
   (:local-nicknames
    (#:mixed #:org.shirakumo.fraf.mixed)
-   (#:mixed-cffi #:org.shirakumo.fraf.mixed.cffi)
-   (#:mpg123 #:org.shirakumo.fraf.mpg123))
+   (#:mixed-cffi #:org.shirakumo.fraf.mixed.cffi))
   (:export
    #:source))
 (in-package #:org.shirakumo.fraf.mixed.mpg123)
@@ -19,21 +18,21 @@
   ((file :initform NIL :accessor file)))
 
 (defmethod initialize-instance :after ((source source) &key file)
-  (setf (file source) (mpg123:make-file file :buffer-size NIL))
+  (setf (file source) (cl-mpg123:make-file file :buffer-size NIL))
   ;; Early start to set pack properties
   (mixed:start source))
 
 (defmethod mixed:free ((source source))
   (when (file source)
-    (when (mpg123:connected (file source))
-      (mpg123:disconnect (file source)))
+    (when (cl-mpg123:connected (file source))
+      (cl-mpg123:disconnect (file source)))
     (setf (file source) NIL)))
 
 (defmethod mixed:start ((source source))
-  (unless (mpg123:connected (file source))
-    (mpg123:connect (file source))
-    (mpg123:scan (file source))
-    (multiple-value-bind (rate channels encoding) (mpg123:file-format (file source))
+  (unless (cl-mpg123:connected (file source))
+    (cl-mpg123:connect (file source))
+    (cl-mpg123:scan (file source))
+    (multiple-value-bind (rate channels encoding) (cl-mpg123:file-format (file source))
       (setf (mixed:samplerate (mixed:pack source)) rate)
       (setf (mixed:channels (mixed:pack source)) channels)
       (setf (mixed:encoding (mixed:pack source)) encoding))))
@@ -41,12 +40,12 @@
 (defmethod mixed:mix ((source source))
   (mixed:with-buffer-tx (data start size (mixed:pack source) :direction :output)
     (when (< 0 size)
-      (handler-bind ((mpg123:read-failed
+      (handler-bind ((cl-mpg123:read-failed
                        (lambda (e)
-                         (case (mpg123:error-code e)
+                         (case (cl-mpg123:error-code e)
                            (:new-format))
                          (continue e))))
-        (let ((read (mpg123:read-directly (file source) (mixed:data-ptr) size)))
+        (let ((read (cl-mpg123:read-directly (file source) (mixed:data-ptr) size)))
           (cond ((< 0 read)
                  (incf (mixed:byte-position source) read)
                  (mixed:finish read))
@@ -54,7 +53,7 @@
                  (setf (mixed:done-p source) T))))))))
 
 (defmethod mixed:end ((source source))
-  (mpg123:disconnect (file source)))
+  (cl-mpg123:disconnect (file source)))
 
 (defmethod mixed:seek-to-frame ((source source) position)
   (cl-mpg123:seek (file source) position :mode :absolute :by :sample))
