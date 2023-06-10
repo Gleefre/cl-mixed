@@ -127,7 +127,7 @@ Author: Nicolas Hafner <shinmera@tymoon.eu>
           ((< 0 size)
            (error "Overcommit")))))
 
-(declaim (inline data-ptr))
+#-cmucl (declaim (inline data-ptr))
 (defun data-ptr (data &optional (start 0))
   (declare (type (unsigned-byte 32) start))
   (static-vectors:static-vector-pointer data :offset start))
