@@ -6,17 +6,19 @@
 
 (in-package #:org.shirakumo.fraf.mixed.examples)
 
-(defun play (file &key (samplerate 44100) (output 'org.shirakumo.fraf.mixed.out123:drain))
+(defun play (file &key (samplerate 44100)
+                       (output 'org.shirakumo.fraf.mixed.out123:drain)
+                       (input  'org.shirakumo.fraf.mixed.mpg123:source))
   (mixed:with-objects ((source (mixed:make-unpacker :samplerate samplerate))
                        (drain (mixed:make-packer :samplerate samplerate))
-                       (mp3 (make-instance 'org.shirakumo.fraf.mixed.mpg123:source :file file :pack source))
+                       (in  (make-instance input :file file :pack source))
                        (out (make-instance output :pack drain)))
     (mixed:with-buffers 500 (l r)
       (mixed:connect source :left drain :left l)
       (mixed:connect source :right drain :right r)
       (mixed:start out)
-      (mixed:with-chain chain (mp3 source drain out)
+      (mixed:with-chain chain (in source drain out)
         (format T "~&Playing back on ~d channels @ ~dHz, ~a~%"
                 (mixed:channels drain) (mixed:samplerate drain) (mixed:encoding drain))
-        (loop until (mixed:done-p mp3)
+        (loop until (mixed:done-p in)
               do (mixed:mix chain))))))
